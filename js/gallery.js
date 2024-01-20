@@ -1,3 +1,5 @@
+"use strict";
+
 const images = [
   {
     preview:
@@ -63,3 +65,50 @@ const images = [
     description: "Lighthouse Coast Sea",
   },
 ];
+
+const galleryList = document.querySelector(".gallery");
+galleryList.addEventListener("click", onGallaryItemClick);
+let markup = "";
+
+markup = images
+  .map(({ preview, original, description }) => {
+    return `<li class="gallery-item">
+  <a class="gallery-link" href="${original}">
+    <img
+      class="gallery-image"
+      src="${preview}"
+      data-source="${original}"
+      alt="${description}"
+    />
+  </a>
+</li>`;
+  })
+  .join("");
+
+galleryList.insertAdjacentHTML("beforeend", markup);
+
+function onGallaryItemClick(e) {
+  e.preventDefault();
+  const liElem = e.target.closest("img");
+  const modalImgSource = liElem.dataset.source;
+
+  const modal = basicLightbox.create(
+    `
+    <img src="${modalImgSource}">
+`,
+    {
+      onShow: (instance) => {
+        document.addEventListener("keydown", onModalClose);
+      },
+      onClose: (instance) => {
+        document.removeEventListener("keydown", onModalClose);
+      },
+    }
+  );
+
+  modal.show();
+
+  function onModalClose(e) {
+    if (e.code === "Escape") modal.close();
+  }
+}
