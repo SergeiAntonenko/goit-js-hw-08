@@ -89,12 +89,18 @@ galleryList.insertAdjacentHTML("beforeend", markup);
 
 function onGallaryItemClick(e) {
   e.preventDefault();
-  const liElem = e.target.closest("img");
-  const modalImgSource = liElem.dataset.source;
+  const imgElem = e.target.closest("img");
+  if (imgElem === null) return;
+
+  const modalImgSource = imgElem.dataset.source;
+  const openedModalImg = images.find(
+    (image) => image.original === modalImgSource
+  );
+  const description = openedModalImg.description;
 
   const modal = basicLightbox.create(
     `
-    <img src="${modalImgSource}">
+    <img src="${modalImgSource}" alt="${description}">
 `,
     {
       onShow: (instance) => {
